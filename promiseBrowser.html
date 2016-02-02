@@ -1,0 +1,72 @@
+<!--Author Sandeep L Hegde
+sandeephegde1990@gmail.com -->
+
+<html>
+  <head>
+    <script type="text/javascript">
+
+        function makeAnAsyncCall(resolve,reject) {
+          var request = new XMLHttpRequest();
+           request.open('GET', 'http://api.icndb.com/jokes/random');
+           request.onload = function() {
+            if (request.status == 200) {
+              resolve(request.response); //we get the data here.So, resolve the Promise
+            }
+            else {
+              reject(Error(request.statusText)); //if status is not 200 OK, reject.
+            }
+          };
+
+          request.onerror = function() {
+            reject(Error("Error fetching data.")); //error occurred, reject the Promise
+          };
+
+          request.send(); //send the request
+        }
+
+        function returnPromise() {
+            return new Promise(function(resolve,reject){
+                  makeAnAsyncCall(resolve,reject);
+            });
+        }
+
+
+        if(window.Promise){
+          console.log('Promise example starting');
+
+          var step1 = function() {
+              return returnPromise().then(function(data) {
+                  console.log("step1 completed");
+                  return "sandeep";
+              });
+          };
+
+          var step2 = function(name) {
+              return returnPromise().then(function(data) {
+                  console.log("step2 completed "+name);
+                  return "pradeep";
+              });
+          };
+
+          var step3 = function(name) {
+              return returnPromise().then(function(data) {
+                  console.log("step3 completed "+name);
+                  return "sumana";
+              });
+          };
+
+          step1().then(step2).then(step3).then(function(name) {
+              console.log("Stop it guys enough "+name);
+          });
+
+          console.log('Asynchronous request made.');
+        }else {
+            console.log('Promise not available');
+        }
+
+    </script>
+  </head>
+  <body>
+    <h3> Simple example of a promise inside a browser </h3>
+  </body>
+</html>
